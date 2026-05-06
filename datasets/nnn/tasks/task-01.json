@@ -1,0 +1,23 @@
+{
+  "id": "task-01",
+  "title": "导航到子目录并查看文件列表",
+  "description": "用户想要浏览一个项目目录，进入其中的 src 子目录，查看里面有哪些源码文件，然后返回上级目录。",
+  "category": "navigation",
+  "preconditions": {
+    "setup_command": "mkdir -p /tmp/nnn-test-01/src && touch /tmp/nnn-test-01/src/main.c /tmp/nnn-test-01/src/utils.c /tmp/nnn-test-01/src/Makefile && touch /tmp/nnn-test-01/README.md",
+    "description": "存在一个包含 src/ 子目录的项目目录"
+  },
+  "oracle": {
+    "type": "exit_code",
+    "check": "nnn /tmp/nnn-test-01 启动后，依次按 l 进入 src/，确认看到文件后按 h 返回，按 q 退出",
+    "expected": 0,
+    "description": "nnn 正常退出，无崩溃"
+  },
+  "negative_oracle": {
+    "description": "如果 nnn 启动后立即崩溃、卡死、或退出码非 0，则任务失败"
+  },
+  "hints": {
+    "key_operations": ["l (进入目录)", "h (返回上级)", "q (退出)"],
+    "expected_flow": "启动 → 看到 README.md 和 src/ → 按 l 进入 src/ → 看到 main.c, utils.c, Makefile → 按 h 返回 → 按 q 退出"
+  }
+}

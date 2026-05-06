@@ -1,0 +1,23 @@
+{
+  "name": "wego",
+  "url": "https://github.com/schachmat/wego",
+  "language": "Go",
+  "license": "ISC",
+  "description": "终端天气查询客户端，支持 8 种天气数据后端和 4 种展示前端（ASCII、Emoji、Markdown、JSON），具备磁盘缓存功能",
+  "category": "weather-cli",
+  "interaction_level": "low",
+  "terminal_ui_library": "go-colorable",
+  "version": "latest",
+  "platforms": ["linux", "macos", "bsd", "windows"],
+  "dependencies": {
+    "required": ["go 1.20+"],
+    "optional": ["API key（open-meteo 和 smhi 后端免费无需 key）"]
+  },
+  "key_features": [
+    "8 种天气后端（openweathermap, weatherapi, open-meteo, smhi, caiyun 等）",
+    "4 种前端展示（ascii-art-table, emoji, markdown, json）",
+    "磁盘缓存（可配置 TTL）",
+    "多语言支持",
+    "多单位制（metric, imperial, si）"
+  ]
+}

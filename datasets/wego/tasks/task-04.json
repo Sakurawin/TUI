@@ -1,0 +1,25 @@
+{
+  "id": "task-04",
+  "title": "使用离线 JSON 后端查看天气数据",
+  "description": "用户在没有网络的环境下，希望 wego 能读取一个本地的天气 JSON 文件来展示天气预报，验证其离线工作能力。",
+  "category": "offline_usage",
+  "preconditions": {
+    "setup_command": "test -f ./wego/benchmarks/wego/fixtures/weather-sample.json",
+    "description": "本地 JSON fixture 文件存在"
+  },
+  "oracle": {
+    "type": "command_output",
+    "check": "wego --backend json --frontend json -- ./wego/benchmarks/wego/fixtures/weather-sample.json",
+    "expected": "输出合法 JSON，包含深圳（Shenzhen）的天气数据，退出码为 0",
+    "description": "wego 成功读取本地 fixture 并输出结构化天气数据"
+  },
+  "negative_oracle": {
+    "check": "wego --backend json --frontend json -- /nonexistent/path.json",
+    "expected": "任务应标记为失败",
+    "description": "如果 fixture 文件不存在时仍输出数据（说明走了网络而非本地），或 fixture 存在时无法解析，则任务失败"
+  },
+  "hints": {
+    "command": "wego --backend json --frontend json -- ./fixtures/weather-sample.json",
+    "note": "json 后端读取本地文件，无需网络；输出应包含 temperature、wind、location 等字段"
+  }
+}

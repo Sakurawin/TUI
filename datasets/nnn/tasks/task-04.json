@@ -1,0 +1,23 @@
+{
+  "id": "task-04",
+  "title": "使用过滤功能快速找到特定文件",
+  "description": "用户在一个包含大量文件的目录中，想要快速找到所有 CSV 格式的报告文件。目录中有各种类型的文件混杂在一起。",
+  "category": "search_filter",
+  "preconditions": {
+    "setup_command": "mkdir -p /tmp/nnn-test-04/data && touch /tmp/nnn-test-04/data/{report_2024.csv,report_2025.csv,budget.xlsx,notes.txt,photo.jpg,summary.csv,readme.md}",
+    "description": "存在一个包含多种类型文件的目录"
+  },
+  "oracle": {
+    "type": "command_output",
+    "check": "Agent 操作序列中是否包含过滤操作（按 / 并输入 csv）",
+    "expected": "Agent 成功执行过滤，屏幕上只显示 .csv 文件（report_2024.csv, report_2025.csv, summary.csv）",
+    "description": "过滤功能被正确使用，结果仅包含 csv 文件"
+  },
+  "negative_oracle": {
+    "description": "如果 Agent 未使用过滤功能而逐行浏览全部文件、或过滤后结果包含非 csv 文件、或过滤无结果，则任务失败"
+  },
+  "hints": {
+    "key_operations": ["/ (过滤模式)", "Escape (退出过滤保留视图)", "q (退出)"],
+    "expected_flow": "进入目录 → 按 / 进入过滤 → 输入 csv → 列表实时过滤为 3 个 csv 文件 → 确认后退出"
+  }
+}

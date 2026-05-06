@@ -1,0 +1,32 @@
+{
+  "name": "nnn",
+  "url": "https://github.com/jarun/nnn",
+  "language": "C",
+  "license": "BSD-2-Clause",
+  "description": "终端文件管理器，支持目录导航、文件操作、批量重命名、即时过滤、多上下文切换，可通过插件扩展功能",
+  "category": "file-manager",
+  "interaction_level": "high",
+  "terminal_ui_library": "ncurses",
+  "version": "5.2",
+  "binary_size_kb": 100,
+  "memory_usage_mb": 3.5,
+  "platforms": ["linux", "macos", "bsd", "haiku", "wsl", "termux"],
+  "dependencies": {
+    "required": ["ncurses"],
+    "optional": ["readline", "pcre2"]
+  },
+  "key_features": [
+    "vim-style 键位导航 (h/j/k/l)",
+    "即时过滤搜索 (search-as-you-type)",
+    "多上下文/标签页 (1-8)",
+    "批量文件选择与操作",
+    "65 个插件扩展",
+    "会话与书签管理",
+    "磁盘使用分析"
+  ],
+  "source_files": {
+    "main": "src/nnn.c",
+    "keybindings": "src/nnn.h",
+    "total_lines": 10798
+  }
+}

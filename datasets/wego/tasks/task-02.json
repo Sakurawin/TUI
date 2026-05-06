@@ -1,0 +1,26 @@
+{
+  "id": "task-02",
+  "title": "切换不同的前端展示格式",
+  "description": "用户想要查看天气预报，但希望尝试不同的展示风格：JSON 格式方便程序解析，Markdown 格式方便文档嵌入，ASCII 艺术表格方便终端阅读。",
+  "category": "display_format",
+  "preconditions": {
+    "setup_command": "export WEGORC=/tmp/wego-test-02-wegorc && wego --backend json --frontend json -- ./wego/benchmarks/wego/fixtures/weather-sample.json > /dev/null 2>&1 || true",
+    "description": "使用本地 JSON fixture 作为数据源，确保输出可复现"
+  },
+  "oracle": {
+    "type": "command_output",
+    "check": "分别运行 wego --backend json --frontend json/markdown/ascii-art-table，检查输出格式",
+    "expected": "json 输出为合法 JSON；markdown 输出包含表格结构（| 分隔）；ascii-art-table 输出包含 ASCII 边框字符；三者格式明显不同",
+    "description": "三种前端产生格式可区分的合法输出"
+  },
+  "negative_oracle": {
+    "description": "如果三种前端输出格式相同、JSON 输出不可解析、或任何一种前端报错退出，则任务失败"
+  },
+  "hints": {
+    "commands": [
+      "wego --backend json --frontend json -- ./fixtures/weather-sample.json",
+      "wego --backend json --frontend markdown -- ./fixtures/weather-sample.json",
+      "wego --backend json --frontend ascii-art-table -- ./fixtures/weather-sample.json"
+    ]
+  }
+}

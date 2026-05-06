@@ -1,0 +1,22 @@
+{
+  "id": "task-01",
+  "title": "首次运行生成配置文件",
+  "description": "用户第一次使用 wego，希望它能自动创建默认配置文件，以便后续自定义设置。",
+  "category": "configuration",
+  "preconditions": {
+    "setup_command": "export WEGORC=/tmp/wego-test-config && rm -f $WEGORC",
+    "description": "配置文件不存在，确保是首次运行"
+  },
+  "oracle": {
+    "type": "file_exists",
+    "check": "test -s $WEGORC",
+    "expected": "配置文件已创建且非空",
+    "description": "wego 首次运行后自动生成配置文件"
+  },
+  "negative_oracle": {
+    "description": "如果配置文件未创建、为空、或进程崩溃，则任务失败"
+  },
+  "hints": {
+    "note": "即使后端返回错误（如缺少 API key），配置文件仍应被创建"
+  }
+}

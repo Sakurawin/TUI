@@ -1,0 +1,26 @@
+{
+  "id": "task-05",
+  "title": "使用多标签页在两个目录之间操作",
+  "description": "用户需要在两个不同的目录之间进行文件同步：把 dir_a 中的一个文件复制到 dir_b 中。用户使用 nnn 的多上下文（标签页）功能来高效完成这个操作，而不是反复手动切换目录。",
+  "category": "multi_context",
+  "preconditions": {
+    "setup_command": "mkdir -p /tmp/nnn-test-05/{dir_a,dir_b} && echo 'important data' > /tmp/nnn-test-05/dir_a/data.txt && echo 'existing file' > /tmp/nnn-test-05/dir_b/info.txt",
+    "description": "存在两个目录，dir_a 中有 data.txt，dir_b 中有 info.txt"
+  },
+  "oracle": {
+    "type": "file_exists",
+    "check": "test -f /tmp/nnn-test-05/dir_b/data.txt && cat /tmp/nnn-test-05/dir_b/data.txt",
+    "expected": "data.txt 存在于 dir_b/ 中，内容为 'important data'",
+    "description": "文件通过多上下文操作被正确复制到目标目录"
+  },
+  "negative_oracle": {
+    "check": "test -f /tmp/nnn-test-05/dir_a/data.txt && test -f /tmp/nnn-test-05/dir_b/info.txt",
+    "expected": "两个检查都返回 true",
+    "description": "源文件仍在 dir_a/（未被移动），dir_b/ 原有文件未被覆盖或删除"
+  },
+  "hints": {
+    "key_operations": ["1-8 (切换上下文)", "Tab (循环上下文)", "Space (选择)", "p (复制粘贴)", "l (进入目录)", "h (返回上级)"],
+    "expected_flow": "在上下文 1 进入 dir_a/ → 选择 data.txt → 按 2 切换到上下文 2 → 进入 dir_b/ → p 粘贴 → 按 1 切回上下文 1 确认 → q 退出",
+    "note": "nnn 支持 1-8 共 8 个独立的上下文/标签页，每个可以独立浏览不同目录"
+  }
+}

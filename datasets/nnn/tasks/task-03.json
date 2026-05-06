@@ -1,0 +1,24 @@
+{
+  "id": "task-03",
+  "title": "创建新目录和文件",
+  "description": "用户想要在一个工作区中新建一个项目骨架：创建 docs/ 目录并在其中新建一个 README.md 文件，文件内容为 \"# My Project\"。",
+  "category": "file_creation",
+  "preconditions": {
+    "setup_command": "mkdir -p /tmp/nnn-test-03/workspace",
+    "description": "存在一个空的 workspace 目录"
+  },
+  "oracle": {
+    "type": "file_content",
+    "check": "cat /tmp/nnn-test-03/workspace/docs/README.md",
+    "expected": "# My Project",
+    "description": "docs/ 目录存在，README.md 存在且内容正确"
+  },
+  "negative_oracle": {
+    "description": "如果 docs/ 目录不存在、README.md 不存在、或文件内容不匹配，则任务失败"
+  },
+  "hints": {
+    "key_operations": ["n (新建)", "e (编辑)", "l (进入目录)", "h (返回上级)"],
+    "expected_flow": "进入 workspace/ → n 新建 docs/ → l 进入 docs/ → n 新建 README.md → e 编辑写入内容 → 保存退出 → h 返回 → q 退出",
+    "note": "在 nnn 中，新建目录时名称以 / 结尾（如 docs/），新建文件时直接输入文件名"
+  }
+}

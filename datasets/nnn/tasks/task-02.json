@@ -1,0 +1,23 @@
+{
+  "id": "task-02",
+  "title": "批量选择文件并复制到另一个目录",
+  "description": "用户有多个日志文件分散在一个目录中，想要把其中特定的几个 .log 文件复制到一个 backup 目录里。",
+  "category": "file_operation",
+  "preconditions": {
+    "setup_command": "mkdir -p /tmp/nnn-test-02/{logs,backup} && touch /tmp/nnn-test-02/logs/{app.log,server.log,debug.log,temp.txt,config.ini}",
+    "description": "存在 logs/ 目录包含混合类型文件，存在空的 backup/ 目录"
+  },
+  "oracle": {
+    "type": "file_exists",
+    "check": "ls /tmp/nnn-test-02/backup/",
+    "expected": "app.log, server.log, debug.log 三个文件存在；temp.txt 和 config.ini 不存在",
+    "description": "选中的 .log 文件被正确复制，非 .log 文件未被复制"
+  },
+  "negative_oracle": {
+    "description": "如果 backup/ 为空（操作未执行）、或包含了 temp.txt/config.ini（选择错误）、或源文件丢失（误删），则任务失败"
+  },
+  "hints": {
+    "key_operations": ["m (多选模式)", "Space (选择/取消选择)", "p (复制粘贴)", "h (返回上级)", "l (进入目录)"],
+    "expected_flow": "进入 logs/ → m 开启多选 → 逐个选中 .log 文件 → p 复制 → h 返回上级 → 进入 backup/ → p 粘贴 → q 退出"
+  }
+}
