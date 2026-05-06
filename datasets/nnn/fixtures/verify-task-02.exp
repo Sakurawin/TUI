@@ -1,0 +1,136 @@
+#!/usr/bin/expect -f
+# 自动化验证 nnn 任务 02：批量选择文件并复制到另一个目录
+# 使用 expect 模式匹配等待 nnn 响应
+
+set timeout 10
+
+# 重建 fixtures
+exec mkdir -p /tmp/nnn-test-02/{logs,backup}
+exec rm -rf /tmp/nnn-test-02/backup
+exec mkdir -p /tmp/nnn-test-02/backup
+exec touch /tmp/nnn-test-02/logs/app.log /tmp/nnn-test-02/logs/server.log /tmp/nnn-test-02/logs/debug.log /tmp/nnn-test-02/logs/temp.txt /tmp/nnn-test-02/logs/config.ini
+
+puts "=== 开始自动化验证任务 02 ==="
+
+set env(LD_LIBRARY_PATH) "/home/wangyuanhao/miniconda3/lib:/usr/lib/x86_64-linux-gnu"
+
+# 启动 nnn
+puts "启动 nnn..."
+spawn /data1/wangyuanhao/TUI/nnn/nnn /tmp/nnn-test-02
+
+# 等待 nnn 显示目录内容（等待看到 backup/ 和 logs/）
+expect {
+    "backup" { puts "看到 backup/ 目录" }
+    timeout { puts "超时：nnn 未启动"; exit 1 }
+}
+sleep 0.5
+
+# 进入 logs/
+puts "进入 logs/..."
+send "l"
+
+# 等待看到文件列表
+expect {
+    "app.log" { puts "看到文件列表" }
+    timeout { puts "超时：未进入 logs/"; exit 1 }
+}
+sleep 0.5
+
+# 开启多选模式
+puts "进入多选模式..."
+send "m"
+sleep 0.5
+
+# 选择 app.log（当前光标位置）
+puts "选择 app.log..."
+send " "
+sleep 0.3
+
+# 下移到 config.ini（跳过）
+send "j"
+sleep 0.3
+
+# 下移到 debug.log
+send "j"
+sleep 0.3
+# 选中 debug.log
+puts "选择 debug.log..."
+send " "
+sleep 0.3
+
+# 下移到 server.log
+send "j"
+sleep 0.3
+# 选中 server.log
+puts "选择 server.log..."
+send " "
+sleep 0.3
+
+# 复制
+puts "复制..."
+send "p"
+sleep 0.5
+
+# 返回上级
+puts "返回上级..."
+send "h"
+
+# 等待看到 backup/ 和 logs/
+expect {
+    "backup" { puts "回到根目录" }
+    timeout { puts "超时：未返回根目录"; exit 1 }
+}
+sleep 0.5
+
+# 进入 backup/
+puts "进入 backup/..."
+send "l"
+sleep 0.5
+
+# 粘贴
+puts "粘贴..."
+send "p"
+sleep 1
+
+# 退出
+send "q"
+sleep 0.3
+send "q"
+expect eof
+
+# 验证结果
+puts "\n=== 验证结果 ==="
+
+set pass 1
+foreach {file should_exist} {
+    /tmp/nnn-test-02/backup/app.log 1
+    /tmp/nnn-test-02/backup/server.log 1
+    /tmp/nnn-test-02/backup/debug.log 1
+    /tmp/nnn-test-02/backup/temp.txt 0
+    /tmp/nnn-test-02/backup/config.ini 0
+} {
+    set exists [file exists $file]
+    if {$should_exist && !$exists} {
+        puts "FAIL: $file 应该存在但不存在"
+        set pass 0
+    } elseif {!$should_exist && $exists} {
+        puts "FAIL: $file 不应该存在但存在了"
+        set pass 0
+    }
+}
+
+set files [glob -nocomplain /tmp/nnn-test-02/backup/*]
+if {[llength $files] != 3} {
+    puts "FAIL: backup/ 应该有 3 个文件，实际有 [llength $files] 个"
+    set pass 0
+}
+
+if {$pass} {
+    puts "PASS"
+} else {
+    puts "FAIL"
+    puts "backup/ 内容:"
+    foreach f [glob -nocomplain /tmp/nnn-test-02/backup/*] {
+        puts "  [file tail $f]"
+    }
+}
