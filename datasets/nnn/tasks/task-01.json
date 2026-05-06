@@ -1,13 +1,36 @@
 {
+  "_doc": {
+    "说明": "nnn 任务 01：导航到子目录并查看文件列表",
+    "字段说明": {
+      "id": "任务唯一编号，格式 task-XX",
+      "title": "一句话任务标题",
+      "description": "自然语言描述用户想做什么，不涉及具体按键操作。TUI 生成 Agent 读这段话来理解需求",
+      "category": "任务类别，方便按类型筛选（navigation / file_operation / file_creation / search_filter / multi_context）",
+      "preconditions": "验证前必须满足的环境条件",
+      "oracle": "判定任务成功的核心条件",
+      "negative_oracle": "判定任务失败的条件（什么情况下算 FAIL）",
+      "hints": "给 Agent 的提示信息，不是硬约束"
+    },
+    "oracle 字段说明": {
+      "type": "判定类型：exit_code（检查退出码）/ file_exists（检查文件是否存在）/ file_content（检查文件内容）/ command_output（检查命令输出）",
+      "check": "Agent 或人工执行的验证命令",
+      "expected": "check 的预期结果（自然语言描述）",
+      "description": "用人话解释 oracle 的含义",
+      "automated_check": "可自动化执行的 shell 脚本，输出 PASS/FAIL",
+      "automated_expected": "automated_check 的预期输出"
+    }
+  },
   "id": "task-01",
   "title": "导航到子目录并查看文件列表",
   "description": "用户想要浏览一个项目目录，进入其中的 src 子目录，查看里面有哪些源码文件，然后返回上级目录。",
   "category": "navigation",
   "preconditions": {
+    "_doc": "验证前先执行 setup_command 创建测试目录和文件",
     "setup_command": "mkdir -p /tmp/nnn-test-01/src && touch /tmp/nnn-test-01/src/main.c /tmp/nnn-test-01/src/utils.c /tmp/nnn-test-01/src/Makefile && touch /tmp/nnn-test-01/README.md",
     "description": "存在一个包含 src/ 子目录的项目目录"
   },
   "oracle": {
+    "_doc": "这个任务只检查 nnn 能否正常启动和退出，因为导航操作没有副作用（不改文件系统）",
     "type": "exit_code",
     "check": "nnn /tmp/nnn-test-01",
     "expected": "exit code 0",
@@ -16,11 +39,13 @@
     "automated_expected": "0"
   },
   "negative_oracle": {
+    "_doc": "反向验证：什么情况算失败",
     "check": "timeout 1 nnn /tmp/nonexistent-dir < /dev/null; echo $?",
     "expected": "非零退出码",
     "description": "如果 nnn 启动后立即崩溃、卡死、或退出码非 0，则任务失败"
   },
   "hints": {
+    "_doc": "提示信息，帮助 Agent 理解如何操作，但不是硬约束",
     "key_operations": ["l (进入目录)", "h (返回上级)", "q (退出)"],
     "expected_flow": "启动 → 看到 README.md 和 src/ → 按 l 进入 src/ → 看到 main.c, utils.c, Makefile → 按 h 返回 → 按 q 退出"
   }

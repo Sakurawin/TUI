@@ -1,26 +1,51 @@
 {
+  "_doc": {
+    "说明": "nnn 任务 02：批量选择文件并复制到另一个目录",
+    "字段说明": {
+      "id": "任务唯一编号，格式 task-XX",
+      "title": "一句话任务标题",
+      "description": "自然语言描述用户想做什么，不涉及具体按键操作。TUI 生成 Agent 读这段话来理解需求",
+      "category": "任务类别，方便按类型筛选（navigation / file_operation / file_creation / search_filter / multi_context）",
+      "preconditions": "验证前必须满足的环境条件",
+      "oracle": "判定任务成功的核心条件",
+      "negative_oracle": "判定任务失败的条件（什么情况下算 FAIL）",
+      "hints": "给 Agent 的提示信息，不是硬约束"
+    },
+    "oracle 字段说明": {
+      "type": "判定类型：exit_code（检查退出码）/ file_exists（检查文件是否存在）/ file_content（检查文件内容）/ command_output（检查命令输出）",
+      "check": "Agent 或人工执行的验证命令",
+      "expected": "check 的预期结果（自然语言描述）",
+      "description": "用人话解释 oracle 的含义",
+      "automated_check": "可自动化执行的 shell 脚本，输出 PASS/FAIL",
+      "automated_expected": "automated_check 的预期输出"
+    }
+  },
   "id": "task-02",
   "title": "批量选择文件并复制到另一个目录",
   "description": "用户有多个日志文件分散在一个目录中，想要把其中特定的几个 .log 文件复制到一个 backup 目录里。",
   "category": "file_operation",
   "preconditions": {
+    "_doc": "验证前先执行 setup_command 创建测试目录和文件。logs/ 下有 5 个文件（3 个 .log + 2 个其他类型），backup/ 为空",
     "setup_command": "mkdir -p /tmp/nnn-test-02/{logs,backup} && touch /tmp/nnn-test-02/logs/{app.log,server.log,debug.log,temp.txt,config.ini}",
     "description": "存在 logs/ 目录包含混合类型文件，存在空的 backup/ 目录"
   },
   "oracle": {
+    "_doc": "检查 backup/ 目录：3 个 .log 文件必须存在，2 个非 .log 文件必须不存在",
     "type": "file_exists",
-    "check": "test -f /tmp/nnn-test-02/backup/app.log && test -f /tmp/nnn-test-02/backup/beta.txt && test -f /tmp/nnn-test-02/backup/debug.log && test ! -f /tmp/nnn-test-02/backup/temp.txt && test ! -f /tmp/nnn-test-02/backup/config.ini",
+    "check": "test -f /tmp/nnn-test-02/backup/app.log && test -f /tmp/nnn-test-02/backup/server.log && test -f /tmp/nnn-test-02/backup/debug.log && test ! -f /tmp/nnn-test-02/backup/temp.txt && test ! -f /tmp/nnn-test-02/backup/config.ini",
     "expected": "exit code 0（三个 .log 文件存在，两个非 .log 文件不存在）",
     "description": "选中的 .log 文件被正确复制，非 .log 文件未被复制",
     "automated_check": "cd /tmp/nnn-test-02/backup && [ $(ls | wc -l) -eq 3 ] && [ -f app.log ] && [ -f server.log ] && [ -f debug.log ] && [ ! -f temp.txt ] && [ ! -f config.ini ]",
     "automated_expected": "exit code 0"
   },
   "negative_oracle": {
+    "_doc": "反向验证：backup 为空说明没操作，文件多了说明全选了，源文件少了说明误删了",
     "check": "ls /tmp/nnn-test-02/backup/ 2>/dev/null | wc -l",
     "expected": "0（空目录表示操作未执行）",
     "description": "如果 backup/ 为空（操作未执行）、或包含了 temp.txt/config.ini（选择错误）、或源文件丢失（误删），则任务失败"
   },
   "hints": {
+    "_doc": "提示信息，帮助 Agent 理解如何操作，但不是硬约束",
     "key_operations": ["m (多选模式)", "Space (选择/取消选择)", "p (复制粘贴)", "h (返回上级)", "l (进入目录)"],
     "expected_flow": "进入 logs/ → m 开启多选 → 逐个选中 .log 文件 → p 复制 → h 返回上级 → 进入 backup/ → p 粘贴 → q 退出"
   }
