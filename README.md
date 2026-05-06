@@ -74,7 +74,6 @@ datasets/
 |------|------|----------|--------|------|
 | nnn | 文件管理器 | high | 5 | 完成 |
 | wego | 天气查询工具 | low | 4 | 完成 |
-| pokete | 终端游戏 | high | - | 待补充 |
 | lazygit | Git 管理器 | high | - | 候选 |
 | btop | 系统监控 | medium | - | 候选 |
 
