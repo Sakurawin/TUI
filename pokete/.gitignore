@@ -1,0 +1,16 @@
+**/__pycache__
+dist/
+build/
+**/*.egg-info
+.DS_Store
+
+.idea
+scrap_engine.py
+.mypy_cache
+.ropeproject
+.fleet
+.zed
+.vscode
+.vim
+*.spec
+.ruff_cache

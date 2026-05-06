@@ -1,0 +1,75 @@
+{
+  "Current": {
+    "Time": "2026-04-28T12:00:00Z",
+    "Code": 13,
+    "Desc": "Partly cloudy",
+    "TempC": 26.0,
+    "FeelsLikeC": 29.0,
+    "WinddirDegree": 90
+  },
+  "Forecast": [
+    {
+      "Date": "2026-04-28T00:00:00Z",
+      "Slots": [
+        {
+          "Time": "2026-04-28T06:00:00Z",
+          "Code": 13,
+          "Desc": "Partly cloudy",
+          "TempC": 25.0,
+          "FeelsLikeC": 27.0,
+          "WinddirDegree": 90
+        },
+        {
+          "Time": "2026-04-28T12:00:00Z",
+          "Code": 14,
+          "Desc": "Sunny",
+          "TempC": 28.0,
+          "FeelsLikeC": 30.0,
+          "WinddirDegree": 110
+        },
+        {
+          "Time": "2026-04-28T18:00:00Z",
+          "Code": 13,
+          "Desc": "Partly cloudy",
+          "TempC": 24.0,
+          "FeelsLikeC": 25.0,
+          "WinddirDegree": 120
+        }
+      ],
+      "Astronomy": {
+        "Sunrise": "2026-04-28T06:00:00Z",
+        "Sunset": "2026-04-28T18:30:00Z"
+      }
+    },
+    {
+      "Date": "2026-04-29T00:00:00Z",
+      "Slots": [
+        {
+          "Time": "2026-04-29T06:00:00Z",
+          "Code": 17,
+          "Desc": "Light rain",
+          "TempC": 23.0,
+          "FeelsLikeC": 24.0,
+          "WinddirDegree": 150
+        },
+        {
+          "Time": "2026-04-29T12:00:00Z",
+          "Code": 13,
+          "Desc": "Partly cloudy",
+          "TempC": 27.0,
+          "FeelsLikeC": 29.0,
+          "WinddirDegree": 140
+        }
+      ],
+      "Astronomy": {
+        "Sunrise": "2026-04-29T05:59:00Z",
+        "Sunset": "2026-04-29T18:31:00Z"
+      }
+    }
+  ],
+  "Location": "Shenzhen",
+  "GeoLoc": {
+    "Latitude": 22.5431,
+    "Longitude": 114.0579
+  }
+}
