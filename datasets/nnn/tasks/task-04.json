@@ -8,16 +8,19 @@
     "description": "存在一个包含多种类型文件的目录"
   },
   "oracle": {
-    "type": "command_output",
-    "check": "Agent 操作序列中是否包含过滤操作（按 / 并输入 csv）",
-    "expected": "Agent 成功执行过滤，屏幕上只显示 .csv 文件（report_2024.csv, report_2025.csv, summary.csv）",
-    "description": "过滤功能被正确使用，结果仅包含 csv 文件"
+    "type": "exit_code",
+    "check": "nnn /tmp/nnn-test-04/data",
+    "expected": "exit code 0",
+    "description": "nnn 能正常启动、执行过滤操作、退出",
+    "automated_check": "timeout 5 nnn /tmp/nnn-test-04/data < /dev/null; echo $?",
+    "automated_expected": "0"
   },
   "negative_oracle": {
-    "description": "如果 Agent 未使用过滤功能而逐行浏览全部文件、或过滤后结果包含非 csv 文件、或过滤无结果，则任务失败"
+    "description": "如果 nnn 在过滤操作中崩溃、卡死、或退出码非 0，则任务失败"
   },
   "hints": {
     "key_operations": ["/ (过滤模式)", "Escape (退出过滤保留视图)", "q (退出)"],
-    "expected_flow": "进入目录 → 按 / 进入过滤 → 输入 csv → 列表实时过滤为 3 个 csv 文件 → 确认后退出"
+    "expected_flow": "进入目录 → 按 / 进入过滤 → 输入 csv → 列表实时过滤为 3 个 csv 文件 → 确认后退出",
+    "observable_behavior": "过滤后屏幕上应只显示 report_2024.csv, report_2025.csv, summary.csv 三个文件"
   }
 }

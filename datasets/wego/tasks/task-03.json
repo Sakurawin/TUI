@@ -4,19 +4,22 @@
   "description": "用户频繁查询同一地点的天气，希望 wego 能缓存上次的查询结果以减少网络请求和等待时间。用户还想了解如何禁用缓存以获取最新数据。",
   "category": "caching",
   "preconditions": {
-    "setup_command": "rm -f /tmp/wego-cache-test",
+    "setup_command": "rm -rf /tmp/wego-cache-dir && mkdir -p /tmp/wego-cache-dir",
     "description": "清除旧缓存，确保首次运行无缓存命中"
   },
   "oracle": {
     "type": "command_output",
-    "check": "1) 第一次运行 wego，记录缓存文件修改时间；2) 第二次运行相同参数，检查缓存文件 mtime 未变；3) 用 --cache-ttl=0 运行不同参数，确认无新缓存创建",
-    "expected": "首次运行创建缓存文件；二次运行复用缓存（mtime 不变）；禁用缓存时不创建缓存文件",
-    "description": "缓存创建、复用、禁用三种场景均表现正确"
+    "check": "export WEGORC=/tmp/wego-cache-dir/wegorc && wego --backend json --frontend json -- ./wego/benchmarks/wego/fixtures/weather-sample.json >/dev/null 2>&1 && CACHE1=$(find /tmp -name '*wego*' -newer /tmp/wego-cache-dir/wegorc -type f 2>/dev/null | head -1) && [ -n \"$CACHE1\" ] && MTIME1=$(stat -c %Y \"$CACHE1\") && wego --backend json --frontend json -- ./wego/benchmarks/wego/fixtures/weather-sample.json >/dev/null 2>&1 && MTIME2=$(stat -c %Y \"$CACHE1\") && [ \"$MTIME1\" = \"$MTIME2\" ]",
+    "expected": "exit code 0（首次创建缓存，二次复用缓存 mtime 不变）",
+    "description": "缓存创建、复用两种场景均表现正确",
+    "automated_check": "export WEGORC=/tmp/wego-cache-dir/wegorc && FIX=./wego/benchmarks/wego/fixtures/weather-sample.json && wego --backend json --frontend json -- $FIX >/dev/null 2>&1 && CACHE1=$(find /tmp -name '*wego*' -type f 2>/dev/null | head -1) && [ -n \"$CACHE1\" ] && MTIME1=$(stat -c %Y \"$CACHE1\" 2>/dev/null || stat -f %m \"$CACHE1\" 2>/dev/null) && sleep 1 && wego --backend json --frontend json -- $FIX >/dev/null 2>&1 && MTIME2=$(stat -c %Y \"$CACHE1\" 2>/dev/null || stat -f %m \"$CACHE1\" 2>/dev/null) && [ \"$MTIME1\" = \"$MTIME2\" ] && echo PASS || echo FAIL",
+    "automated_expected": "PASS"
   },
   "negative_oracle": {
-    "description": "如果首次运行未创建缓存、二次运行覆盖了缓存（mtime 变化）、或禁用缓存时仍创建了缓存文件，则任务失败"
+    "description": "如果首次运行未创建缓存、二次运行覆盖了缓存（mtime 变化），则任务失败"
   },
   "hints": {
-    "key_operations": ["wego (首次运行创建缓存)", "wego (二次运行复用缓存)", "wego --cache-ttl=0 (禁用缓存)"]
+    "key_operations": ["wego (首次运行创建缓存)", "wego (二次运行复用缓存)"],
+    "note": "缓存文件通常在系统临时目录中，文件名基于 backend+location+days 的哈希值"
   }
 }

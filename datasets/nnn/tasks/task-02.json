@@ -9,11 +9,15 @@
   },
   "oracle": {
     "type": "file_exists",
-    "check": "ls /tmp/nnn-test-02/backup/",
-    "expected": "app.log, server.log, debug.log 三个文件存在；temp.txt 和 config.ini 不存在",
-    "description": "选中的 .log 文件被正确复制，非 .log 文件未被复制"
+    "check": "test -f /tmp/nnn-test-02/backup/app.log && test -f /tmp/nnn-test-02/backup/beta.txt && test -f /tmp/nnn-test-02/backup/debug.log && test ! -f /tmp/nnn-test-02/backup/temp.txt && test ! -f /tmp/nnn-test-02/backup/config.ini",
+    "expected": "exit code 0（三个 .log 文件存在，两个非 .log 文件不存在）",
+    "description": "选中的 .log 文件被正确复制，非 .log 文件未被复制",
+    "automated_check": "cd /tmp/nnn-test-02/backup && [ $(ls | wc -l) -eq 3 ] && [ -f app.log ] && [ -f server.log ] && [ -f debug.log ] && [ ! -f temp.txt ] && [ ! -f config.ini ]",
+    "automated_expected": "exit code 0"
   },
   "negative_oracle": {
+    "check": "ls /tmp/nnn-test-02/backup/ 2>/dev/null | wc -l",
+    "expected": "0（空目录表示操作未执行）",
     "description": "如果 backup/ 为空（操作未执行）、或包含了 temp.txt/config.ini（选择错误）、或源文件丢失（误删），则任务失败"
   },
   "hints": {

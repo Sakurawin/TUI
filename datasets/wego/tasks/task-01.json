@@ -4,16 +4,20 @@
   "description": "用户第一次使用 wego，希望它能自动创建默认配置文件，以便后续自定义设置。",
   "category": "configuration",
   "preconditions": {
-    "setup_command": "export WEGORC=/tmp/wego-test-config && rm -f $WEGORC",
+    "setup_command": "rm -f /tmp/wego-test-01-wegorc",
     "description": "配置文件不存在，确保是首次运行"
   },
   "oracle": {
     "type": "file_exists",
-    "check": "test -s $WEGORC",
-    "expected": "配置文件已创建且非空",
-    "description": "wego 首次运行后自动生成配置文件"
+    "check": "WEGORC=/tmp/wego-test-01-wegorc wego --backend open-meteo -- 1 2>/dev/null; test -s /tmp/wego-test-01-wegorc",
+    "expected": "exit code 0（配置文件已创建且非空）",
+    "description": "wego 首次运行后自动生成配置文件",
+    "automated_check": "WEGORC=/tmp/wego-test-01-wegorc wego --backend open-meteo -- 1 >/dev/null 2>&1; test -s /tmp/wego-test-01-wegorc && echo PASS || echo FAIL",
+    "automated_expected": "PASS"
   },
   "negative_oracle": {
+    "check": "test -s /tmp/wego-test-01-wegorc",
+    "expected": "exit code 非 0（文件不存在或为空）",
     "description": "如果配置文件未创建、为空、或进程崩溃，则任务失败"
   },
   "hints": {

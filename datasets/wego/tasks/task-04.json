@@ -9,17 +9,19 @@
   },
   "oracle": {
     "type": "command_output",
-    "check": "wego --backend json --frontend json -- ./wego/benchmarks/wego/fixtures/weather-sample.json",
-    "expected": "输出合法 JSON，包含深圳（Shenzhen）的天气数据，退出码为 0",
-    "description": "wego 成功读取本地 fixture 并输出结构化天气数据"
+    "check": "wego --backend json --frontend json -- ./wego/benchmarks/wego/fixtures/weather-sample.json 2>/dev/null | python3 -m json.tool >/dev/null 2>&1",
+    "expected": "exit code 0（输出为合法 JSON）",
+    "description": "wego 成功读取本地 fixture 并输出结构化天气数据",
+    "automated_check": "OUT=$(wego --backend json --frontend json -- ./wego/benchmarks/wego/fixtures/weather-sample.json 2>/dev/null) && echo \"$OUT\" | python3 -m json.tool >/dev/null 2>&1 && echo \"$OUT\" | grep -qi 'shenzhen' && echo PASS || echo FAIL",
+    "automated_expected": "PASS"
   },
   "negative_oracle": {
-    "check": "wego --backend json --frontend json -- /nonexistent/path.json",
-    "expected": "任务应标记为失败",
+    "check": "wego --backend json --frontend json -- /nonexistent/path.json 2>/dev/null; echo $?",
+    "expected": "非零退出码或无输出",
     "description": "如果 fixture 文件不存在时仍输出数据（说明走了网络而非本地），或 fixture 存在时无法解析，则任务失败"
   },
   "hints": {
-    "command": "wego --backend json --frontend json -- ./fixtures/weather-sample.json",
+    "command": "wego --backend json --frontend json -- ./wego/benchmarks/wego/fixtures/weather-sample.json",
     "note": "json 后端读取本地文件，无需网络；输出应包含 temperature、wind、location 等字段"
   }
 }

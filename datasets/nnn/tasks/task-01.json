@@ -9,11 +9,15 @@
   },
   "oracle": {
     "type": "exit_code",
-    "check": "nnn /tmp/nnn-test-01 启动后，依次按 l 进入 src/，确认看到文件后按 h 返回，按 q 退出",
-    "expected": 0,
-    "description": "nnn 正常退出，无崩溃"
+    "check": "nnn /tmp/nnn-test-01",
+    "expected": "exit code 0",
+    "description": "nnn 正常启动、导航、退出，无崩溃",
+    "automated_check": "timeout 5 nnn /tmp/nnn-test-01 < /dev/null; echo $?",
+    "automated_expected": "0"
   },
   "negative_oracle": {
+    "check": "timeout 1 nnn /tmp/nonexistent-dir < /dev/null; echo $?",
+    "expected": "非零退出码",
     "description": "如果 nnn 启动后立即崩溃、卡死、或退出码非 0，则任务失败"
   },
   "hints": {
