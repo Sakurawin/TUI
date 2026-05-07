@@ -28,20 +28,25 @@
 - 已覆盖能力：配置初始化、frontend 切换、缓存行为、离线 JSON backend、agent task execution 基础可靠性
 - 明显短板：不能代表复杂全屏、高交互、多面板 TUI
 - 当前状态：已建立 benchmark 资产
-- 相关目录：`benchmarks/wego/`
+- 相关目录：`datasets/wego/`
 - 备注：适合作为第一步，但必须补一个更高交互的 TUI 对照项目
+
+### 项目：lazygit
+
+- 项目定位：高交互 Git 工作流 benchmark
+- 当前结论：已选入
+- 主要价值：验证高交互、多面板、复杂 Git 操作场景下的 benchmark 流程
+- 已覆盖能力：多面板导航、commit、branch、stash、diff、rebase、cherry-pick、discard
+- 明显短板：需要本地 Git 仓库作为 fixture
+- 当前状态：已建立 benchmark 资产
+- 相关目录：`datasets/lazygit/`
+- 备注：作为 wego 之后的第二个高交互 TUI benchmark
 
 ## 下一批优先候选
 
 这些项目目前还没有正式入选，但优先级最高，适合下一步继续筛选：
 
-### 优先候选 1：lazygit
-
-- 推荐原因：本地可运行、环境轻、交互强、任务可设计性高
-- 适合作为：高交互 Git 工作流 benchmark
-- 当前判断：最适合作为 `wego` 之后的下一项目
-
-### 优先候选 2：nnn
+### 优先候选 1：nnn
 
 - 推荐原因：文件系统任务容易隔离，oracle 相对容易做
 - 适合作为：高交互文件导航与文件操作 benchmark

@@ -1,0 +1,30 @@
+{
+  "_doc": {
+    "说明": "lazygit 任务 02：创建并切换分支"
+  },
+  "id": "task-02",
+  "title": "创建并切换分支",
+  "description": "用户在 main 分支上，希望创建一个名为 feature 的新分支并切换过去。",
+  "category": "branch",
+  "preconditions": {
+    "_doc": "验证前先执行 setup_command 创建有初始提交的 Git 仓库",
+    "setup_command": "rm -rf /tmp/lg-test-02 && mkdir -p /tmp/lg-test-02 && cd /tmp/lg-test-02 && git init && git config user.email 'test@test.com' && git config user.name 'Test' && echo 'init' > .gitkeep && git add . && git commit -m 'init'",
+    "description": "存在一个有初始提交的 Git 仓库"
+  },
+  "oracle": {
+    "_doc": "检查当前分支是否为 feature，且分支列表包含 feature",
+    "type": "command_output",
+    "check": "cd /tmp/lg-test-02 && git branch --show-current",
+    "expected": "feature",
+    "description": "当前分支为 feature",
+    "automated_check": "cd /tmp/lg-test-02 && [ \"$(git branch --show-current)\" = 'feature' ] && git branch | grep -q 'feature' && echo PASS || echo FAIL",
+    "automated_expected": "PASS"
+  },
+  "negative_oracle": {
+    "description": "如果当前分支不是 feature、或分支列表中没有 feature，则任务失败"
+  },
+  "hints": {
+    "key_operations": ["3 (切换到分支面板)", "n (新建分支)", "q (退出)"],
+    "expected_flow": "启动 lazygit → 按 3 进入分支面板 → 按 n 输入 'feature' → Enter 确认 → q 退出"
+  }
+}

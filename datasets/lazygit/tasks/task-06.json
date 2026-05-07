@@ -1,0 +1,30 @@
+{
+  "_doc": {
+    "说明": "lazygit 任务 06：交互式 rebase"
+  },
+  "id": "task-06",
+  "title": "交互式 rebase",
+  "description": "用户有 3 个连续 commit，希望将后两个 squash 成一个。",
+  "category": "rebase",
+  "preconditions": {
+    "_doc": "创建有 3 个连续 commit 的 Git 仓库",
+    "setup_command": "rm -rf /tmp/lg-test-06 && mkdir -p /tmp/lg-test-06 && cd /tmp/lg-test-06 && git init && git config user.email 'test@test.com' && git config user.name 'Test' && echo 'a' > f.txt && git add . && git commit -m 'commit A' && echo 'b' >> f.txt && git add . && git commit -m 'commit B' && echo 'c' >> f.txt && git add . && git commit -m 'commit C'",
+    "description": "存在一个有 3 个连续 commit 的 Git 仓库"
+  },
+  "oracle": {
+    "_doc": "检查 commit 数量从 3 减少到 2",
+    "type": "command_output",
+    "check": "cd /tmp/lg-test-06 && git log --oneline | wc -l",
+    "expected": "2",
+    "description": "rebase 后 commit 数量为 2（后两个 squash 成一个）",
+    "automated_check": "cd /tmp/lg-test-06 && [ \"$(git log --oneline | wc -l)\" -eq 2 ] && echo PASS || echo FAIL",
+    "automated_expected": "PASS"
+  },
+  "negative_oracle": {
+    "description": "如果 commit 数量未减少、或 rebase 中途失败，则任务失败"
+  },
+  "hints": {
+    "key_operations": ["↓ (选中目标 commit)", "e (进入 rebase 编辑)", "s (squash)", "q (退出)"],
+    "expected_flow": "启动 lazygit → 选中第一个 commit → 按 e 编辑 → 选择 squash → 保留消息 → q 退出"
+  }
+}

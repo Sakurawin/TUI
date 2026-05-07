@@ -1,0 +1,24 @@
+{
+  "name": "lazygit",
+  "url": "https://github.com/jesseduffield/lazygit",
+  "language": "Go",
+  "license": "MIT",
+  "description": "Git 仓库管理 TUI，提供多面板界面管理暂存区、分支、提交历史、stash 等",
+  "category": "git-manager",
+  "interaction_level": "high",
+  "terminal_ui_library": "gocui",
+  "version": "latest",
+  "platforms": ["linux", "macos", "bsd", "windows"],
+  "dependencies": {
+    "required": ["go 1.20+", "git"],
+    "optional": []
+  },
+  "key_features": [
+    "多面板布局（文件/分支/提交/stash/远程）",
+    "vim-style 导航 (h/j/k/l)",
+    "交互式 rebase（squash/reword/fixup）",
+    "暂存区精细操作（行级 stage/unstage）",
+    "合并冲突可视化解决",
+    "cherry-pick、bisect 等高级 Git 操作"
+  ]
+}

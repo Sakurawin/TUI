@@ -1,0 +1,30 @@
+{
+  "_doc": {
+    "说明": "lazygit 任务 08：丢弃未暂存更改"
+  },
+  "id": "task-08",
+  "title": "丢弃未暂存更改",
+  "description": "用户有未暂存的修改文件，希望丢弃所有更改恢复到上次提交的状态。",
+  "category": "discard",
+  "preconditions": {
+    "_doc": "创建有初始提交和工作区修改的 Git 仓库",
+    "setup_command": "rm -rf /tmp/lg-test-08 && mkdir -p /tmp/lg-test-08 && cd /tmp/lg-test-08 && git init && git config user.email 'test@test.com' && git config user.name 'Test' && echo 'original content' > data.txt && git add . && git commit -m 'init' && echo 'dirty changes' >> data.txt",
+    "description": "存在一个有初始提交的 Git 仓库，工作区有未暂存的修改"
+  },
+  "oracle": {
+    "_doc": "检查 git status 干净，文件内容恢复到原始状态",
+    "type": "command_output",
+    "check": "cd /tmp/lg-test-08 && git status --short && cat data.txt",
+    "expected": "git status 无输出（工作区干净），data.txt 内容为 'original content'",
+    "description": "工作区干净，文件恢复到上次提交的状态",
+    "automated_check": "cd /tmp/lg-test-08 && [ -z \"$(git status --short)\" ] && grep -q 'original content' data.txt && ! grep -q 'dirty changes' data.txt && echo PASS || echo FAIL",
+    "automated_expected": "PASS"
+  },
+  "negative_oracle": {
+    "description": "如果工作区仍包含未提交的修改，则任务失败"
+  },
+  "hints": {
+    "key_operations": ["↓ (选中文件)", "d (丢弃更改)", "q (退出)"],
+    "expected_flow": "启动 lazygit → 选中修改的文件 → 按 d → 确认丢弃 → q 退出"
+  }
+}
