@@ -1,0 +1,150 @@
+#!/usr/bin/expect -f
+# 使用 expect 与 nnn 交互 - 修正版本
+
+set timeout 30
+
+# 清理环境
+exec rm -rf /tmp/nnn-test-03
+exec mkdir -p /tmp/nnn-test-03/workspace
+
+# 设置环境变量
+set env(LD_LIBRARY_PATH) "/home/wangyuanhao/miniconda3/lib:/usr/lib/x86_64-linux-gnu"
+
+# 启动 nnn
+spawn /data1/wangyuanhao/TUI/nnn/nnn /tmp/nnn-test-03/workspace
+
+# 等待 nnn 启动并显示界面
+expect {
+    "0/0" {
+        puts "nnn 已启动"
+    }
+    timeout {
+        puts "超时：nnn 未启动"
+        exit 1
+    }
+}
+
+# 按 n 创建新目录
+send "n"
+sleep 1
+
+# 等待类型选择提示
+expect {
+    "file" {
+        puts "看到类型选择提示"
+    }
+    timeout {
+        puts "超时：未看到类型选择提示"
+        exit 1
+    }
+}
+
+# 按 d 选择目录
+send "d"
+sleep 1
+
+# 等待名称输入提示
+expect {
+    "name:" {
+        puts "看到名称输入提示"
+    }
+    timeout {
+        puts "超时：未看到名称输入提示"
+        exit 1
+    }
+}
+
+# 输入目录名
+send "docs/"
+sleep 0.5
+
+# 按 Enter 确认
+send "\r"
+sleep 2
+
+# 检查是否创建成功
+puts "\n=== 检查目录是否创建 ==="
+exec ls -la /tmp/nnn-test-03/workspace/
+
+# 按 l 进入目录
+send "l"
+sleep 1
+
+# 按 n 创建文件
+send "n"
+sleep 1
+
+# 等待类型选择提示
+expect {
+    "file" {
+        puts "看到类型选择提示"
+    }
+    timeout {
+        puts "超时：未看到类型选择提示"
+        exit 1
+    }
+}
+
+# 按 f 选择文件
+send "f"
+sleep 1
+
+# 等待名称输入提示
+expect {
+    "name:" {
+        puts "看到名称输入提示"
+    }
+    timeout {
+        puts "超时：未看到名称输入提示"
+        exit 1
+    }
+}
+
+# 输入文件名
+send "README.md"
+sleep 0.5
+
+# 按 Enter 确认
+send "\r"
+sleep 2
+
+# 检查文件是否创建
+puts "\n=== 检查文件是否创建 ==="
+exec ls -la /tmp/nnn-test-03/workspace/docs/
+
+# 按 e 编辑文件
+send "e"
+sleep 2
+
+# 输入文件内容
+send "i# My Project"
+sleep 0.5
+
+# 按 Esc 退出插入模式
+send "\033"
+sleep 0.5
+
+# 保存退出
+send ":wq\r"
+sleep 2
+
+# 检查文件内容
+puts "\n=== 检查文件内容 ==="
+exec cat /tmp/nnn-test-03/workspace/docs/README.md
+
+# 返回上级
+send "h"
+sleep 1
+
+# 再返回上级
+send "h"
+sleep 1
+
+# 退出 nnn
+send "q"
+sleep 1
+
+# 等待退出
+expect eof
+
+puts "\n=== 测试完成 ==="
