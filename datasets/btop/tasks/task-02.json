@@ -1,0 +1,27 @@
+{
+  "id": "task-02",
+  "title": "识别 CPU 压力来源",
+  "description": "用户想确认当前系统中哪个受控工作负载正在制造 CPU 压力，并在 btop 中定位它。",
+  "category": "resource-observation",
+  "preconditions": {
+    "setup_command": "bash datasets/btop/fixtures/setup.sh",
+    "description": "CPU burn container is running"
+  },
+  "oracle": {
+    "type": "command_output",
+    "check": "docker ps --format '{{.Names}}' | grep -qx 'cpu-burn'",
+    "expected": "cpu-burn workload is active",
+    "description": "CPU 负载容器已启动，btop 应该能够观察到稳定的高负载进程",
+    "automated_check": "docker ps --format '{{.Names}}' | grep -qx 'cpu-burn' && echo PASS || echo FAIL",
+    "automated_expected": "PASS"
+  },
+  "negative_oracle": {
+    "check": "docker ps --format '{{.Names}}' | grep -qx 'cpu-burn'",
+    "expected": "exit code 非 0（CPU 负载容器不存在或未运行）",
+    "description": "如果 CPU 负载服务没有运行，就不能验证该任务"
+  },
+  "hints": {
+    "key_operations": ["CPU panel", "process list", "sort by usage"],
+    "expected_flow": "打开 btop，查看 CPU 使用情况，并确认哪个进程或容器在制造负载"
+  }
+}

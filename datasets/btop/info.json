@@ -1,0 +1,23 @@
+{
+  "name": "btop",
+  "url": "https://github.com/aristocratos/btop",
+  "language": "C++",
+  "license": "Apache-2.0",
+  "description": "终端系统监控工具，提供 CPU、内存、磁盘、网络和进程面板，适合观察系统状态和定位负载问题",
+  "category": "system-monitor",
+  "interaction_level": "medium",
+  "terminal_ui_library": "ftxui",
+  "version": "latest",
+  "platforms": ["linux", "macos", "bsd", "windows"],
+  "dependencies": {
+    "required": ["docker", "tmux"],
+    "optional": ["git", "curl"]
+  },
+  "key_features": [
+    "多面板系统监控界面",
+    "进程浏览与过滤",
+    "CPU、内存、磁盘、网络状态查看",
+    "帮助页与快捷键驱动交互",
+    "适合观察受控负载与命名进程"
+  ]
+}

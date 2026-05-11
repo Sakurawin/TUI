@@ -1,0 +1,16 @@
+services:
+  cpu-burn:
+    image: alpine:3.20
+    command: ["sh", "-c", "while true; do sha256sum /dev/zero >/dev/null; done"]
+    restart: unless-stopped
+
+  memory-burn:
+    image: python:3.12-alpine
+    command: ["sh", "-c", "python3 - <<'PY'\nchunks=[]\nwhile True:\n    chunks.append(bytearray(1024 * 1024))\nPY"]
+    restart: unless-stopped
+
+  named-worker:
+    image: alpine:3.20
+    container_name: btop-named-worker
+    command: ["sh", "-c", "while true; do echo 'btop worker alive'; sleep 2; done"]
+    restart: unless-stopped

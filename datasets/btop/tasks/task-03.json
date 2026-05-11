@@ -1,0 +1,27 @@
+{
+  "id": "task-03",
+  "title": "查看内存压力面板",
+  "description": "用户想在 btop 中确认是否存在固定的内存压力工作负载，并查看其影响。",
+  "category": "resource-observation",
+  "preconditions": {
+    "setup_command": "bash datasets/btop/fixtures/setup.sh",
+    "description": "Memory burn container is running"
+  },
+  "oracle": {
+    "type": "command_output",
+    "check": "docker ps --format '{{.Names}}' | grep -qx 'memory-burn'",
+    "expected": "memory-burn workload is active",
+    "description": "内存负载容器已启动，可作为稳定的观察目标",
+    "automated_check": "docker ps --format '{{.Names}}' | grep -qx 'memory-burn' && echo PASS || echo FAIL",
+    "automated_expected": "PASS"
+  },
+  "negative_oracle": {
+    "check": "docker ps --format '{{.Names}}' | grep -qx 'memory-burn'",
+    "expected": "exit code 非 0（内存负载容器不存在或未运行）",
+    "description": "如果内存工作负载不存在，就判定失败"
+  },
+  "hints": {
+    "key_operations": ["memory panel", "process panel", "toggle details"],
+    "expected_flow": "打开 btop，查看内存使用情况，并确认受控工作负载在进程列表或资源视图中可见"
+  }
+}
