@@ -115,7 +115,31 @@ nnn -d
 
 ### 运行时报错 `libtinfow.so.6: cannot open shared object`
 
-运行时找不到 ncurses 动态库，设置 `export LD_LIBRARY_PATH=/path/to/ncurses/lib:$LD_LIBRARY_PATH`。
+系统缺少 `libtinfow.so.6`（ncurses 的 wide-character tinfo 库）。通常系统有 `libncursesw.so.6`，但没有独立的 tinfo wide 版本。
+
+**有 sudo 权限：** 直接安装对应包：
+
+```bash
+# Ubuntu / Debian
+sudo apt install libtinfow6
+
+# CentOS / RHEL
+sudo yum install ncurses-libs
+```
+
+**无 sudo 权限：** 利用已有库创建符号链接：
+
+```bash
+mkdir -p ~/lib
+ln -s /lib/x86_64-linux-gnu/libncursesw.so.6 ~/lib/libtinfow.so.6
+
+# 临时生效
+LD_LIBRARY_PATH=~/lib ./nnn/nnn
+
+# 写入 alias，长期生效
+echo "alias nnn='LD_LIBRARY_PATH=~/lib /path/to/nnn/nnn'" >> ~/.bashrc
+source ~/.bashrc
+```
 
 ### 终端显示乱码
 
