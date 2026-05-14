@@ -1,27 +1,27 @@
 {
   "id": "task-01",
   "title": "定位命名工作进程",
-  "description": "用户想在 btop 中找到名为 btop-named-worker 的进程，并确认它正在运行。",
+  "description": "用户想在 btop 中找到名为 btop-named-worker 的进程，并确认它正在运行。预期效果：在进程列表中能够看到该命名进程处于活跃状态。",
   "category": "process-discovery",
   "preconditions": {
     "setup_command": "bash datasets/btop/fixtures/setup.sh",
-    "description": "Docker fixtures are running, including the named worker container"
+    "description": "Docker fixtures 已启动，包含一个名为 btop-named-worker 的工作容器"
   },
   "oracle": {
     "type": "command_output",
     "check": "docker ps --format '{{.Names}}' | grep -qx 'btop-named-worker'",
-    "expected": "btop-named-worker is listed as running",
+    "expected": "btop-named-worker 处于运行状态",
     "description": "命名工作进程正在运行，可被 btop 观察到",
+    "verification_criteria": "在 btop 的进程列表中应能看到一个名为 btop-named-worker 的进程，且该进程处于活跃状态",
     "automated_check": "docker ps --format '{{.Names}}' | grep -qx 'btop-named-worker' && echo PASS || echo FAIL",
     "automated_expected": "PASS"
   },
   "negative_oracle": {
     "check": "docker ps --format '{{.Names}}' | grep -qx 'btop-named-worker'",
-    "expected": "exit code 非 0（目标容器不存在或未运行）",
+    "expected": "目标容器不存在或未运行",
     "description": "如果命名工作进程没有运行，或者 benchmark 使用了不同的名称，就判定失败"
   },
   "hints": {
-    "key_operations": ["process panel", "search", "filter"],
-    "expected_flow": "打开 btop，切换到进程视图，搜索 btop-named-worker，并确认它可见"
+    "note": "打开 btop 的进程视图，使用搜索或过滤功能查找目标进程"
   }
 }

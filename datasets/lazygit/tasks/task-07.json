@@ -1,22 +1,18 @@
 {
-  "_doc": {
-    "说明": "lazygit 任务 07：Cherry-pick 提交"
-  },
   "id": "task-07",
   "title": "Cherry-pick 提交",
-  "description": "用户在 feature 分支有一个 commit，希望 cherry-pick 到 main 分支。",
+  "description": "用户在 feature 分支有一个 commit，希望 cherry-pick 到 main 分支。预期效果：main 分支的提交历史中包含 feature 分支的那个 commit。",
   "category": "cherry-pick",
   "preconditions": {
-    "_doc": "创建有两个分支的 Git 仓库，feature 有独有的 commit",
     "setup_command": "rm -rf /tmp/lg-test-07 && mkdir -p /tmp/lg-test-07 && cd /tmp/lg-test-07 && git init && git branch -m main && git config user.email 'test@test.com' && git config user.name 'Test' && echo 'base' > f.txt && git add . && git commit -m 'base' && git checkout -b feature && echo 'feature work' >> f.txt && git add . && git commit -m 'feature commit' && git checkout main",
-    "description": "存在一个有两个分支的 Git 仓库，feature 分支有独有的 commit"
+    "description": "存在一个有两个分支的 Git 仓库，feature 分支有独有的 commit（'feature commit'）"
   },
   "oracle": {
-    "_doc": "检查 main 分支的 git log 包含 feature commit 的内容",
     "type": "command_output",
     "check": "cd /tmp/lg-test-07 && git log main --oneline",
     "expected": "main 分支的 log 包含 'feature commit'",
     "description": "cherry-pick 成功，main 分支包含目标 commit",
+    "verification_criteria": "main 分支的提交历史中应包含 'feature commit'，表明 cherry-pick 操作成功",
     "automated_check": "cd /tmp/lg-test-07 && git log main --oneline | grep -q 'feature commit' && echo PASS || echo FAIL",
     "automated_expected": "PASS"
   },
@@ -24,7 +20,6 @@
     "description": "如果 main 分支不包含目标 commit，则任务失败"
   },
   "hints": {
-    "key_operations": ["3 (分支面板)", "↓ (选中 commit)", "C (复制)", "V (粘贴)", "q (退出)"],
-    "expected_flow": "启动 lazygit → 切换到 feature 分支 → 选中 commit → C 复制 → 切换到 main → V 粘贴 → q 退出"
+    "note": "从 feature 分支复制目标 commit，然后粘贴到 main 分支"
   }
 }

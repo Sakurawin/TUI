@@ -1,22 +1,18 @@
 {
-  "_doc": {
-    "说明": "lazygit 任务 04：查看文件 diff"
-  },
   "id": "task-04",
   "title": "查看文件 diff",
-  "description": "用户修改了一个文件，希望在 lazygit 中查看 diff 了解具体变更内容。",
+  "description": "用户修改了一个文件，希望在 lazygit 中查看 diff 了解具体变更内容。预期效果：diff 面板中显示文件的增删改动，包含新增行和删除行的标记。",
   "category": "diff",
   "preconditions": {
-    "_doc": "创建有初始提交和多行修改的 Git 仓库",
     "setup_command": "rm -rf /tmp/lg-test-04 && mkdir -p /tmp/lg-test-04 && cd /tmp/lg-test-04 && git init && git config user.email 'test@test.com' && git config user.name 'Test' && printf 'line1\\nline2\\nline3\\n' > file.txt && git add . && git commit -m 'init' && printf 'line1\\nmodified line2\\nline3\\nnew line4\\n' > file.txt",
-    "description": "存在一个有初始提交的 Git 仓库，工作区文件有多行修改"
+    "description": "存在一个有初始提交的 Git 仓库，工作区文件有多行修改（含新增和修改的行）"
   },
   "oracle": {
-    "_doc": "通过 tmux 截屏检查 diff 内容是否显示在屏幕上",
     "type": "command_output",
     "check": "tmux capture-pane -t lg-test-04 -p 2>/dev/null | grep -c '[+-]'",
     "expected": "截屏中包含 diff 标记（+ 和 - 行），计数大于 0",
     "description": "lazygit 的 diff 面板正确显示了文件变更",
+    "verification_criteria": "屏幕上应显示文件的 diff 内容，包含新增行（+）和删除行（-）的标记",
     "automated_check": "DIFF_COUNT=$(tmux capture-pane -t lg-test-04 -p 2>/dev/null | grep -c '[+-]' || echo 0) && [ \"$DIFF_COUNT\" -gt 0 ] && echo PASS || echo FAIL",
     "automated_expected": "PASS"
   },
@@ -24,7 +20,6 @@
     "description": "如果截屏为空或不包含 diff 标记，则任务失败"
   },
   "hints": {
-    "key_operations": ["Enter (查看 diff)", "q (退出)"],
-    "expected_flow": "启动 lazygit → 选中修改的文件 → Enter 查看 diff → 确认显示 +/- 行 → q 退出"
+    "note": "选中修改的文件后查看其 diff，确认屏幕上显示了增删改动的标记"
   }
 }

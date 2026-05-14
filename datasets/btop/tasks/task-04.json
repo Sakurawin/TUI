@@ -1,25 +1,25 @@
 {
   "id": "task-04",
   "title": "过滤进程列表",
-  "description": "用户想在 btop 的进程列表里只保留目标工作负载相关的条目，以减少噪声。",
+  "description": "用户想在 btop 的进程列表里只保留目标工作负载相关的条目，以减少噪声。预期效果：通过搜索或过滤功能，进程列表仅显示与目标 fixture 相关的进程。",
   "category": "filtering",
   "preconditions": {
     "setup_command": "bash datasets/btop/fixtures/setup.sh",
-    "description": "All fixture containers are running"
+    "description": "所有 fixture 容器（cpu-burn、memory-burn、btop-named-worker）均已启动"
   },
   "oracle": {
     "type": "command_output",
     "check": "docker ps --format '{{.Names}}' | sort | tr '\n' ' '",
-    "expected": "The fixture names cpu-burn, memory-burn, and btop-named-worker are available for filtering",
+    "expected": "所有 fixture 容器名称均可用于过滤",
     "description": "所有 fixture 名称都存在，便于在 btop 里做稳定过滤",
+    "verification_criteria": "使用 btop 的搜索或过滤功能后，进程列表应能缩小范围，使目标 fixture 进程清晰可见",
     "automated_check": "docker ps --format '{{.Names}}' | grep -q 'cpu-burn' && docker ps --format '{{.Names}}' | grep -q 'memory-burn' && docker ps --format '{{.Names}}' | grep -q 'btop-named-worker' && echo PASS || echo FAIL",
     "automated_expected": "PASS"
   },
   "negative_oracle": {
-    "description": "如果 benchmark 环境缺少任意一个 fixture 名称，这个任务就无效。"
+    "description": "如果 benchmark 环境缺少任意一个 fixture 名称，这个任务就无效"
   },
   "hints": {
-    "key_operations": ["search", "filter", "process panel"],
-    "expected_flow": "使用 btop 缩小进程视图范围，直到目标 fixture 进程容易检查为止"
+    "note": "使用 btop 的搜索或过滤功能缩小进程视图范围，直到目标进程容易检查为止"
   }
 }

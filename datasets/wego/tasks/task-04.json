@@ -1,27 +1,27 @@
 {
   "id": "task-04",
   "title": "使用离线 JSON 后端查看天气数据",
-  "description": "用户在没有网络的环境下，希望 wego 能读取一个本地的天气 JSON 文件来展示天气预报，验证其离线工作能力。",
+  "description": "用户在没有网络的环境下，希望 wego 能读取一个本地的天气 JSON 文件来展示天气预报，验证其离线工作能力。预期效果：指定本地 JSON 文件作为数据源后，终端应输出结构化的天气数据，且数据内容与本地文件一致。",
   "category": "offline_usage",
   "preconditions": {
     "setup_command": "test -f ./wego/benchmarks/wego/fixtures/weather-sample.json",
-    "description": "本地 JSON fixture 文件存在"
+    "description": "本地存在一份天气样本 JSON 文件，作为离线数据源"
   },
   "oracle": {
     "type": "command_output",
     "check": "wego --backend json --frontend json -- ./wego/benchmarks/wego/fixtures/weather-sample.json 2>/dev/null | python3 -m json.tool >/dev/null 2>&1",
-    "expected": "exit code 0（输出为合法 JSON）",
+    "expected": "输出为合法 JSON 格式",
     "description": "wego 成功读取本地 fixture 并输出结构化天气数据",
+    "verification_criteria": "1. 输出内容是合法的 JSON 格式；2. 输出中包含与本地文件一致的天气数据（如城市名称、温度等字段）",
     "automated_check": "OUT=$(wego --backend json --frontend json -- ./wego/benchmarks/wego/fixtures/weather-sample.json 2>/dev/null) && echo \"$OUT\" | python3 -m json.tool >/dev/null 2>&1 && echo \"$OUT\" | grep -qi 'shenzhen' && echo PASS || echo FAIL",
     "automated_expected": "PASS"
   },
   "negative_oracle": {
     "check": "wego --backend json --frontend json -- /nonexistent/path.json 2>/dev/null; echo $?",
     "expected": "非零退出码或无输出",
-    "description": "如果 fixture 文件不存在时仍输出数据（说明走了网络而非本地），或 fixture 存在时无法解析，则任务失败"
+    "description": "如果本地文件不存在时仍输出数据（说明走了网络而非本地），或文件存在时无法解析，则任务失败"
   },
   "hints": {
-    "command": "wego --backend json --frontend json -- ./wego/benchmarks/wego/fixtures/weather-sample.json",
-    "note": "json 后端读取本地文件，无需网络；输出应包含 temperature、wind、location 等字段"
+    "note": "使用 json 后端读取本地文件，无需网络连接；输出应包含 temperature、wind、location 等字段"
   }
 }

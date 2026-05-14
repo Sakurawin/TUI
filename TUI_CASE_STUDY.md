@@ -1,12 +1,17 @@
 # TUI 评测数据集候选项目调研
 
-本文基于当前仓库目标重新编写。当前项目不是要开发一个 TUI 应用，而是要构建一套结构化的 TUI 评测数据集，用于驱动和验证“生成式 TUI”的 Agent 系统。
+本文用于记录所有有待考虑的 TUI 候选项目及其地址，作为数据集构建的项目筛选依据。
 
-本文调研以下三个来源：
+当前项目不是要开发一个 TUI 应用，而是要构建一套结构化的 TUI 评测数据集，用于驱动和验证"生成式 TUI"的 Agent 系统。
+
+本文调研来源：
 
 - Ratatui 官网：<https://ratatui.rs/>
 - Textual 示例目录：<https://github.com/Textualize/textual/tree/main/examples>
 - Ratatui 示例目录：<https://github.com/ratatui/ratatui/tree/main/examples>
+- Awesome Ratatui：<https://github.com/ratatui/awesome-ratatui>
+- Awesome OpenTUI：<https://github.com/msmps/awesome-opentui>
+- Reddit CLI/TUI 精选：<https://www.reddit.com/r/commandline/comments/1jniqsy/essential_clitui_tools_for_developers/>
 
 本文重点不是学习 Ratatui 或 Textual 如何写代码，而是判断这些项目、示例和生态案例是否适合转化为本仓库的数据集资产，包括 `info.json`、`install.md`、`tasks/*.json`、fixture、oracle 和人工验证记录。
 
@@ -79,6 +84,70 @@ datasets/
 | 交互覆盖度 | 是否能测试 TUI Agent 能力 | 多面板、焦点、快捷键、输入、确认 | 单次命令输出，无持续交互 |
 | 安装成本 | 是否能写出稳定安装文档 | 包管理器、源码构建、单二进制 | 编译复杂、依赖重、平台强绑定 |
 | 与现有数据集互补 | 是否补充新能力 | API 浏览、表格、图表、层级数据 | 与 `nnn` 或 `lazygit` 高度重复 |
+
+## 核心综合榜单 (Master Lists)
+
+这些仓库是 TUI 界的"百科全书"，包含了绝大多数成熟且流行的项目。
+
+### Awesome Ratatui
+
+项目地址：<https://github.com/ratatui/awesome-ratatui>
+
+特点：专注于使用 Rust 语言中最流行的 TUI 框架 `ratatui` 构建的应用。
+
+科研价值：这里的项目通常代码质量极高、交互非常现代且稳定，非常适合进行基于 Rust 的静态代码分析。
+
+### Awesome OpenTUI
+
+项目地址：<https://github.com/msmps/awesome-opentui>
+
+特点：2026 年较新的榜单，包含了许多**面向 AI Agent** 设计的 TUI（如 `hunk`）和现代组件化 TUI。
+
+科研价值：由于课题涉及 Agent-as-a-User，这个榜单中的"Agent-friendly"工具可以直接作为研究对象或对比标准。
+
+### Reddit CLI/TUI 精选
+
+项目地址：<https://www.reddit.com/r/commandline/comments/1jniqsy/essential_clitui_tools_for_developers/>
+
+特点：由 Reddit 社区用户根据"日常必用"投票选出，实战性极强。
+
+---
+
+## 按领域分类的"种子项目"推荐
+
+为保证 Benchmark 的**多样性（Diversity）**，建议从以下四个领域中各选出 2-3 个代表作：
+
+| 领域 | 顶级推荐 | 理由 |
+| --- | --- | --- |
+| **版本控制** | `lazygit`, `gitui`, `tig` | 交互极其复杂，包含弹窗、多级菜单、动态列表 |
+| **系统监控** | `btop`, `htop`, `k9s` | 涉及大量实时刷新的 UI 元素，考验 Agent 的观测频率 |
+| **文件管理** | `yazi`, `ranger`, `superfile` | 典型的三栏布局，包含大量文件系统交互 |
+| **开发测试** | `lazydocker`, `atac`, `harlequin` | 功能逻辑性强，容易定义"成功/失败"的 Oracle 信号 |
+
+各项目地址：
+
+| 项目 | 地址 | 说明 |
+| --- | --- | --- |
+| `gitui` | <https://github.com/extrawurst/gitui> | Rust 编写的 Git TUI，与 lazygit 互补 |
+| `tig` | <https://github.com/jonas/tig> | 经典 ncurses Git 浏览器 |
+| `htop` | <https://github.com/htop-dev/htop> | 经典进程查看器 |
+| `k9s` | <https://github.com/derailed/k9s> | Kubernetes 集群管理 TUI（重环境） |
+| `yazi` | <https://github.com/sxyazi/yazi> | Rust 编写的现代文件管理器 |
+| `ranger` | <https://github.com/ranger/ranger> | Python 编写的经典三栏文件管理器 |
+| `superfile` | <https://github.com/MHNightCat/superfile> | Go 编写的现代文件管理器 |
+| `lazydocker` | <https://github.com/jesseduffield/lazydocker> | Docker 管理 TUI，与 lazygit 同作者 |
+| `atac` | <https://github.com/Julien-cpsn/atac> | 终端 API 客户端，类 Postman |
+| `harlequin` | <https://github.com/tconbeer/harlequin> | Python SQL IDE for the terminal |
+
+---
+
+## 构建 Benchmark 的筛选策略
+
+1. **交叉对比筛选**：如果在上述三个榜单中都出现的项目（如 `lazygit`, `btop`, `yazi`），说明其**成熟度**和**通用性**极高，应优先选入。
+2. **获取"专家轨迹"数据**：许多项目有官方演示视频（`asciinema` 录制）。可下载 `.cast` 文件解析为按键流，作为 **Golden Trace（金标准轨迹）**。
+3. **语言多样性**：建议在最终名单中包含 3-4 种不同语言编写的 TUI（如 Go 的 `bubbletea` 系列、Rust 的 `ratatui` 系列、Python 的 `textual` 系列），以论证评测算法具有**跨语言的通用性**。
+
+---
 
 ## 从 Ratatui 官网得到的候选方向
 
@@ -501,15 +570,49 @@ datasets/csvlens/
 
 本文不建议把 Ratatui 或 Textual 官方 examples 直接作为正式数据集项目。它们更适合作为任务能力分类和设计参考。
 
-从当前仓库目标出发，下一批最值得推进的真实项目是：
+### 已完成或已有数据集
 
-| 排名 | 项目 | 结论 |
+| 项目 | 状态 | 说明 |
 | --- | --- | --- |
-| 1 | `csvlens` | 最推荐，适合补充表格数据浏览，环境轻，fixture 稳定 |
-| 2 | `openapi-tui` | 推荐，但必须离线化，适合补充 API 浏览和请求执行 |
-| 3 | `btop` | 可作为观察型 benchmark，适合补充监控面板理解 |
-| 4 | `oxker` | 适合第二阶段，交互价值高但依赖 Docker |
-| 5 | `binsider` | 可作为专业分析类补充，但 oracle 需谨慎设计 |
-| 6 | `yozefu` | 研究价值高，但 Kafka 环境成本较高，建议后置 |
+| `wego` | 已完成 | 低交互 CLI 输出型 |
+| `nnn` | 已完成 | 高交互文件系统型 |
+| `lazygit` | 已完成 | 高交互 Git 工作流型 |
+
+### 第一批候选（轻环境、高互补）
+
+| 排名 | 项目 | 地址 | 结论 |
+| --- | --- | --- | --- |
+| 1 | `csvlens` | <https://github.com/YS-L/csvlens> | 最推荐，表格数据浏览，fixture 简单 |
+| 2 | `openapi-tui` | <https://github.com/zaghaghi/openapi-tui> | 推荐，API 浏览和请求执行，需离线化 |
+| 3 | `btop` | <https://github.com/aristocratos/btop> | 只读监控型，补充面板理解 |
+
+### 第二批候选（需额外环境）
+
+| 排名 | 项目 | 地址 | 结论 |
+| --- | --- | --- | --- |
+| 4 | `oxker` | <https://github.com/mrjackwills/oxker> | Docker 控制台，交互价值高但依赖 Docker |
+| 5 | `lazydocker` | <https://github.com/jesseduffield/lazydocker> | Docker 管理，与 lazygit 同作者 |
+| 6 | `k9s` | <https://github.com/derailed/k9s> | Kubernetes 管理，环境较重 |
+
+### 第三批候选（待调研）
+
+| 排名 | 项目 | 地址 | 结论 |
+| --- | --- | --- | --- |
+| 7 | `binsider` | <https://github.com/orhun/binsider> | 二进制分析，oracle 需谨慎设计 |
+| 8 | `yozefu` | <https://github.com/MAIF/yozefu> | Kafka 探索，环境成本高 |
+| 9 | `gitui` | <https://github.com/extrawurst/gitui> | Git TUI，与 lazygit 互补 |
+| 10 | `yazi` | <https://github.com/sxyazi/yazi> | 现代文件管理器 |
+| 11 | `ranger` | <https://github.com/ranger/ranger> | 经典三栏文件管理器 |
+| 12 | `superfile` | <https://github.com/MHNightCat/superfile> | Go 文件管理器 |
+| 13 | `tig` | <https://github.com/jonas/tig> | 经典 ncurses Git 浏览器 |
+| 14 | `atac` | <https://github.com/Julien-cpsn/atac> | 终端 API 客户端 |
+| 15 | `harlequin` | <https://github.com/tconbeer/harlequin> | Python SQL TUI |
+| 16 | `htop` | <https://github.com/htop-dev/htop> | 经典进程查看器 |
+
+### 待定项目（来源 Awesome OpenTUI / Awesome Ratatui）
+
+以下项目来自 Awesome OpenTUI 等榜单，需进一步调研：
+
+- `hunk` — 面向 AI Agent 设计的 TUI（Awesome OpenTUI 特有）
 
 最务实的下一步是：先把 `csvlens` 加入候选池并建立 `datasets/csvlens/` 原型，用 3 到 4 个任务验证表格型 TUI benchmark 的可行性。完成后，再推进 `openapi-tui` 的离线 mock server 方案。

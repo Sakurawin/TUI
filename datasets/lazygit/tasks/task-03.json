@@ -1,22 +1,18 @@
 {
-  "_doc": {
-    "说明": "lazygit 任务 03：暂存并恢复工作区"
-  },
   "id": "task-03",
   "title": "暂存并恢复工作区",
-  "description": "用户有未提交的修改，希望通过 stash 暂存这些修改，然后恢复回来。",
+  "description": "用户有未提交的修改，希望通过 stash 暂存这些修改，然后恢复回来。预期效果：操作完成后 stash 为空，工作区文件包含之前的修改内容。",
   "category": "stash",
   "preconditions": {
-    "_doc": "创建有初始提交和工作区修改的 Git 仓库",
     "setup_command": "rm -rf /tmp/lg-test-03 && mkdir -p /tmp/lg-test-03 && cd /tmp/lg-test-03 && git init && git config user.email 'test@test.com' && git config user.name 'Test' && echo 'original' > data.txt && git add . && git commit -m 'init' && echo 'modified' >> data.txt",
-    "description": "存在一个有初始提交的 Git 仓库，工作区有未提交的修改"
+    "description": "存在一个有初始提交的 Git 仓库，工作区有未提交的修改（data.txt 被修改）"
   },
   "oracle": {
-    "_doc": "检查 stash 已清空（已弹出），且工作区文件包含修改内容",
     "type": "command_output",
     "check": "cd /tmp/lg-test-03 && git stash list && cat data.txt",
     "expected": "stash list 为空，data.txt 包含 'modified' 行",
     "description": "stash 已弹出，工作区修改已恢复",
+    "verification_criteria": "stash 列表为空（已弹出），且 data.txt 文件中包含修改后的内容",
     "automated_check": "cd /tmp/lg-test-03 && [ -z \"$(git stash list)\" ] && grep -q 'modified' data.txt && echo PASS || echo FAIL",
     "automated_expected": "PASS"
   },
@@ -24,7 +20,6 @@
     "description": "如果 stash 未清空、或工作区修改丢失，则任务失败"
   },
   "hints": {
-    "key_operations": ["4 (切换到 stash 面板)", "s (stash)", "g (弹出 stash)", "q (退出)"],
-    "expected_flow": "启动 lazygit → 按 4 进入 stash 面板 → 按 s 暂存 → 确认 → 按 g 弹出 → 确认 → q 退出"
+    "note": "先将工作区修改暂存到 stash，然后再从 stash 中弹出恢复"
   }
 }

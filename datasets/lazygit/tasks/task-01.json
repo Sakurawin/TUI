@@ -1,50 +1,25 @@
 {
-  "_doc": {
-    "说明": "lazygit 任务 01：提交暂存文件",
-    "字段说明": {
-      "id": "任务唯一编号，格式 task-XX",
-      "title": "一句话任务标题",
-      "description": "自然语言描述用户想做什么，不涉及具体按键操作。TUI 生成 Agent 读这段话来理解需求",
-      "category": "任务类别",
-      "preconditions": "验证前必须满足的环境条件",
-      "oracle": "判定任务成功的核心条件",
-      "negative_oracle": "判定任务失败的条件",
-      "hints": "给 Agent 的提示信息，不是硬约束"
-    },
-    "oracle 字段说明": {
-      "type": "判定类型：exit_code / file_exists / file_content / command_output",
-      "check": "Agent 或人工执行的验证命令",
-      "expected": "check 的预期结果",
-      "description": "用人话解释 oracle 的含义",
-      "automated_check": "可自动化执行的 shell 脚本，输出 PASS/FAIL",
-      "automated_expected": "automated_check 的预期输出"
-    }
-  },
   "id": "task-01",
   "title": "提交暂存文件",
-  "description": "用户在一个 Git 仓库中有两个未跟踪的文件（README.md 和 main.go），希望通过 lazygit 将它们暂存并提交，提交消息为 \"initial commit\"。",
+  "description": "用户在一个 Git 仓库中有两个未跟踪的文件（README.md 和 main.go），希望通过 lazygit 将它们暂存并提交，提交消息为 \"initial commit\"。预期效果：两个文件被提交到仓库，工作区恢复干净状态。",
   "category": "commit",
   "preconditions": {
-    "_doc": "验证前先执行 setup_command 创建测试 Git 仓库和未跟踪文件",
     "setup_command": "rm -rf /tmp/lg-test-01 && mkdir -p /tmp/lg-test-01 && cd /tmp/lg-test-01 && git init && git config user.email 'test@test.com' && git config user.name 'Test' && echo '# Hello' > README.md && echo 'package main' > main.go",
-    "description": "存在一个已初始化的 Git 仓库，包含两个未跟踪文件"
+    "description": "存在一个已初始化的 Git 仓库，包含两个未跟踪文件（README.md 和 main.go）"
   },
   "oracle": {
-    "_doc": "检查 git log 包含正确的提交消息，且工作区干净",
     "type": "command_output",
     "check": "cd /tmp/lg-test-01 && git log --oneline -1 && git status --short",
     "expected": "git log 输出包含 'initial commit'，git status 无输出（工作区干净）",
     "description": "文件被正确暂存并提交，提交消息匹配",
+    "verification_criteria": "提交历史中应包含消息 'initial commit'，且工作区无未提交的更改",
     "automated_check": "cd /tmp/lg-test-01 && git log --oneline -1 | grep -q 'initial commit' && [ -z \"$(git status --short)\" ] && echo PASS || echo FAIL",
     "automated_expected": "PASS"
   },
   "negative_oracle": {
-    "_doc": "反向验证：提交消息不匹配或文件未全部暂存都算失败",
     "description": "如果提交消息不包含 'initial commit'、或 git status 显示有未提交的更改，则任务失败"
   },
   "hints": {
-    "_doc": "提示信息，帮助 Agent 理解如何操作",
-    "key_operations": ["Space (暂存文件)", "c (提交)", "q (退出)"],
-    "expected_flow": "启动 lazygit → 用 j/k 选中文件 → Space 暂存两个文件 → c 输入提交消息 → 确认 → q 退出"
+    "note": "在 lazygit 中暂存文件、输入提交消息并确认提交，完成后退出"
   }
 }

@@ -1,27 +1,27 @@
 {
   "id": "task-02",
   "title": "识别 CPU 压力来源",
-  "description": "用户想确认当前系统中哪个受控工作负载正在制造 CPU 压力，并在 btop 中定位它。",
+  "description": "用户想确认当前系统中哪个受控工作负载正在制造 CPU 压力，并在 btop 中定位它。预期效果：在 CPU 面板中观察到持续的高负载，并能识别出对应的进程。",
   "category": "resource-observation",
   "preconditions": {
     "setup_command": "bash datasets/btop/fixtures/setup.sh",
-    "description": "CPU burn container is running"
+    "description": "CPU 负载容器 cpu-burn 已启动并持续运行"
   },
   "oracle": {
     "type": "command_output",
     "check": "docker ps --format '{{.Names}}' | grep -qx 'cpu-burn'",
-    "expected": "cpu-burn workload is active",
+    "expected": "cpu-burn 工作负载处于活跃状态",
     "description": "CPU 负载容器已启动，btop 应该能够观察到稳定的高负载进程",
+    "verification_criteria": "btop 的 CPU 面板显示持续的高使用率，进程列表中能看到 cpu-burn 相关进程占用较多 CPU 资源",
     "automated_check": "docker ps --format '{{.Names}}' | grep -qx 'cpu-burn' && echo PASS || echo FAIL",
     "automated_expected": "PASS"
   },
   "negative_oracle": {
     "check": "docker ps --format '{{.Names}}' | grep -qx 'cpu-burn'",
-    "expected": "exit code 非 0（CPU 负载容器不存在或未运行）",
+    "expected": "CPU 负载容器不存在或未运行",
     "description": "如果 CPU 负载服务没有运行，就不能验证该任务"
   },
   "hints": {
-    "key_operations": ["CPU panel", "process list", "sort by usage"],
-    "expected_flow": "打开 btop，查看 CPU 使用情况，并确认哪个进程或容器在制造负载"
+    "note": "查看 CPU 面板的使用率图表，并在进程列表中按 CPU 使用率排序以找到负载来源"
   }
 }

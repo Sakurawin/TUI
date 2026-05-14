@@ -1,17 +1,18 @@
 {
   "id": "task-02",
   "title": "切换不同的前端展示格式",
-  "description": "用户想要查看天气预报，但希望尝试不同的展示风格：JSON 格式方便程序解析，Markdown 格式方便文档嵌入，ASCII 艺术表格方便终端阅读。",
+  "description": "用户想要查看天气预报，但希望尝试不同的展示风格：JSON 格式方便程序解析，Markdown 格式方便文档嵌入，ASCII 艺术表格方便终端阅读。预期效果：同一份天气数据通过三种前端展示后，输出格式应明显不同，且各自符合对应的格式规范。",
   "category": "display_format",
   "preconditions": {
     "setup_command": "test -f ./wego/benchmarks/wego/fixtures/weather-sample.json",
-    "description": "使用本地 JSON fixture 作为数据源，确保输出可复现"
+    "description": "本地存在一份天气样本 JSON 文件，作为数据源使用"
   },
   "oracle": {
     "type": "command_output",
     "check": "OUT1=$(wego --backend json --frontend json -- ./wego/benchmarks/wego/fixtures/weather-sample.json 2>/dev/null) && OUT2=$(wego --backend json --frontend markdown -- ./wego/benchmarks/wego/fixtures/weather-sample.json 2>/dev/null) && OUT3=$(wego --backend json --frontend ascii-art-table -- ./wego/benchmarks/wego/fixtures/weather-sample.json 2>/dev/null) && echo \"$OUT1\" | python3 -m json.tool >/dev/null 2>&1 && echo \"$OUT2\" | grep -q '|' && [ \"$OUT1\" != \"$OUT2\" ] && [ \"$OUT2\" != \"$OUT3\" ]",
-    "expected": "exit code 0（json 输出可解析、markdown 包含表格、三者格式不同）",
-    "description": "三种前端产生格式可区分的合法输出",
+    "expected": "三种前端产生格式可区分的合法输出",
+    "description": "json 输出可被标准 JSON 解析器解析；markdown 输出包含表格分隔符；ascii-art-table 输出包含表格边框字符；三者内容互不相同",
+    "verification_criteria": "1. JSON 前端的输出是合法的 JSON 格式；2. Markdown 前端的输出包含表格语法；3. ASCII 前端的输出包含表格边框；4. 三种输出在内容上可明确区分",
     "automated_check": "FIX=./wego/benchmarks/wego/fixtures/weather-sample.json && OJ=$(wego --backend json --frontend json -- $FIX 2>/dev/null) && OM=$(wego --backend json --frontend markdown -- $FIX 2>/dev/null) && OA=$(wego --backend json --frontend ascii-art-table -- $FIX 2>/dev/null) && echo \"$OJ\" | python3 -m json.tool >/dev/null 2>&1 && echo \"$OM\" | grep -q '|' && echo \"$OA\" | grep -qE '[+|]' && [ \"$OJ\" != \"$OM\" ] && [ \"$OM\" != \"$OA\" ] && echo PASS || echo FAIL",
     "automated_expected": "PASS"
   },
@@ -21,10 +22,6 @@
     "description": "如果三种前端输出格式相同、JSON 输出不可解析、或任何一种前端报错退出，则任务失败"
   },
   "hints": {
-    "commands": [
-      "wego --backend json --frontend json -- ./wego/benchmarks/wego/fixtures/weather-sample.json",
-      "wego --backend json --frontend markdown -- ./wego/benchmarks/wego/fixtures/weather-sample.json",
-      "wego --backend json --frontend ascii-art-table -- ./wego/benchmarks/wego/fixtures/weather-sample.json"
-    ]
+    "note": "分别使用 json、markdown、ascii-art-table 三种前端格式输出天气数据，观察输出差异"
   }
 }

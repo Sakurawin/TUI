@@ -1,51 +1,25 @@
 {
-  "_doc": {
-    "说明": "nnn 任务 05：使用多标签页在两个目录之间操作",
-    "字段说明": {
-      "id": "任务唯一编号，格式 task-XX",
-      "title": "一句话任务标题",
-      "description": "自然语言描述用户想做什么，不涉及具体按键操作。TUI 生成 Agent 读这段话来理解需求",
-      "category": "任务类别，方便按类型筛选（navigation / file_operation / file_creation / search_filter / multi_context）",
-      "preconditions": "验证前必须满足的环境条件",
-      "oracle": "判定任务成功的核心条件",
-      "negative_oracle": "判定任务失败的条件（什么情况下算 FAIL）",
-      "hints": "给 Agent 的提示信息，不是硬约束"
-    },
-    "oracle 字段说明": {
-      "type": "判定类型：exit_code（检查退出码）/ file_exists（检查文件是否存在）/ file_content（检查文件内容）/ command_output（检查命令输出）",
-      "check": "Agent 或人工执行的验证命令",
-      "expected": "check 的预期结果（自然语言描述）",
-      "description": "用人话解释 oracle 的含义",
-      "automated_check": "可自动化执行的 shell 脚本，输出 PASS/FAIL",
-      "automated_expected": "automated_check 的预期输出"
-    }
-  },
   "id": "task-05",
   "title": "使用多标签页在两个目录之间操作",
-  "description": "用户需要在两个不同的目录之间进行文件同步：把 dir_a 中的一个文件复制到 dir_b 中。用户使用 nnn 的多上下文（标签页）功能来高效完成这个操作，而不是反复手动切换目录。",
+  "description": "用户需要在两个不同的目录之间进行文件同步：把 dir_a 中的一个文件复制到 dir_b 中。用户使用 nnn 的多上下文（标签页）功能来高效完成这个操作，而不是反复手动切换目录。预期效果：data.txt 被成功复制到 dir_b，内容保持不变，源文件未被移动。",
   "category": "multi_context",
   "preconditions": {
-    "_doc": "验证前先执行 setup_command。dir_a 有 data.txt（内容 important data），dir_b 有 info.txt（内容 existing file）",
     "setup_command": "mkdir -p /tmp/nnn-test-05/{dir_a,dir_b} && echo 'important data' > /tmp/nnn-test-05/dir_a/data.txt && echo 'existing file' > /tmp/nnn-test-05/dir_b/info.txt",
-    "description": "存在两个目录，dir_a 中有 data.txt，dir_b 中有 info.txt"
+    "description": "存在两个目录，dir_a 中有 data.txt（内容为 'important data'），dir_b 中有 info.txt"
   },
   "oracle": {
-    "_doc": "检查两个条件：1) data.txt 被复制到了 dir_b；2) 内容保持不变",
     "type": "file_exists",
     "check": "test -f /tmp/nnn-test-05/dir_b/data.txt && cat /tmp/nnn-test-05/dir_b/data.txt",
     "expected": "data.txt 存在于 dir_b/ 中，内容为 'important data'",
-    "description": "文件通过多上下文操作被正确复制到目标目录"
+    "description": "文件通过多上下文操作被正确复制到目标目录",
+    "verification_criteria": "dir_b 中存在 data.txt 文件，内容与源文件一致（'important data'），且源目录 dir_a 中 data.txt 未被删除"
   },
   "negative_oracle": {
-    "_doc": "反向验证：源文件不能丢，目标目录原有文件不能被破坏",
     "check": "test -f /tmp/nnn-test-05/dir_a/data.txt && test -f /tmp/nnn-test-05/dir_b/info.txt",
     "expected": "两个检查都返回 true",
     "description": "源文件仍在 dir_a/（未被移动），dir_b/ 原有文件未被覆盖或删除"
   },
   "hints": {
-    "_doc": "提示信息。note 字段解释了 nnn 的上下文功能",
-    "key_operations": ["1-8 (切换上下文)", "Tab (循环上下文)", "Space (选择)", "p (复制粘贴)", "l (进入目录)", "h (返回上级)"],
-    "expected_flow": "在上下文 1 进入 dir_a/ → 选择 data.txt → 按 2 切换到上下文 2 → 进入 dir_b/ → p 粘贴 → 按 1 切回上下文 1 确认 → q 退出",
-    "note": "nnn 支持 1-8 共 8 个独立的上下文/标签页，每个可以独立浏览不同目录"
+    "note": "nnn 支持多个独立的上下文/标签页（1-8），可以分别浏览不同目录。在上下文 1 选中文件后，切换到上下文 2 进行粘贴操作"
   }
 }

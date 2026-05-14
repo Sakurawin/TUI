@@ -1,25 +1,25 @@
 {
   "id": "task-05",
   "title": "查看帮助并正常退出",
-  "description": "用户想查看 btop 的帮助信息，然后退出并恢复终端状态。",
+  "description": "用户想查看 btop 的帮助信息，然后退出并恢复终端状态。预期效果：帮助信息正确显示，退出后终端恢复到可继续输入命令的状态。",
   "category": "help-and-exit",
   "preconditions": {
     "setup_command": "bash datasets/btop/fixtures/setup.sh",
-    "description": "btop starts successfully in a tmux pane"
+    "description": "btop 在 tmux 面板中成功启动"
   },
   "oracle": {
     "type": "exit_code",
     "check": "tmux capture-pane -pt btop-benchmark:0.0 | tail -n +1",
     "expected": "退出 btop 后终端返回 shell 提示符",
     "description": "任务结束后，终端必须恢复到可继续输入命令的状态",
-    "automated_check": "tmux capture-pane -pt btop-benchmark:0.0 | tail -n +1 | grep -q '\$' && echo PASS || echo FAIL",
+    "verification_criteria": "btop 退出后，终端未卡在 raw mode，shell 提示符重新出现，用户可以继续输入命令",
+    "automated_check": "tmux capture-pane -pt btop-benchmark:0.0 | tail -n +1 | grep -q '\\$' && echo PASS || echo FAIL",
     "automated_expected": "PASS"
   },
   "negative_oracle": {
-    "description": "如果 raw mode 没有恢复，或者 shell 提示符没有回来，就判定失败。"
+    "description": "如果终端 raw mode 没有恢复，或者 shell 提示符没有回来，就判定失败"
   },
   "hints": {
-    "key_operations": ["help", "quit"],
-    "expected_flow": "先查看帮助，然后干净退出 btop，让终端恢复可用"
+    "note": "先查看帮助信息，然后干净退出 btop，确保终端恢复正常状态"
   }
 }

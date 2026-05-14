@@ -1,22 +1,18 @@
 {
-  "_doc": {
-    "说明": "lazygit 任务 05：解决合并冲突"
-  },
   "id": "task-05",
   "title": "解决合并冲突",
-  "description": "两个分支修改了同一文件的同一区域导致冲突，用户通过 lazygit 选择解决方案。",
+  "description": "两个分支修改了同一文件的同一区域导致冲突，用户通过 lazygit 选择解决方案。预期效果：冲突标记被消除，文件内容为有效的最终版本。",
   "category": "conflict",
   "preconditions": {
-    "_doc": "创建有两个分支且合并会产生冲突的 Git 仓库",
     "setup_command": "rm -rf /tmp/lg-test-05 && mkdir -p /tmp/lg-test-05 && cd /tmp/lg-test-05 && git init && git branch -m main && git config user.email 'test@test.com' && git config user.name 'Test' && echo 'base content' > conflict.txt && git add . && git commit -m 'base' && git checkout -b feature && echo 'feature version' > conflict.txt && git add . && git commit -m 'feature change' && git checkout main && echo 'main version' > conflict.txt && git add . && git commit -m 'main change' && git merge feature || true",
     "description": "存在一个有合并冲突的 Git 仓库，conflict.txt 文件包含冲突标记"
   },
   "oracle": {
-    "_doc": "检查冲突标记已消除，文件内容为预期值",
     "type": "file_content",
     "check": "cat /tmp/lg-test-05/conflict.txt",
     "expected": "文件内容不包含冲突标记（<<<<<<< / ======= / >>>>>>>），且内容为 'main version' 或 'feature version'",
     "description": "冲突已解决，文件内容为有效值",
+    "verification_criteria": "conflict.txt 文件中不再包含冲突标记（<<<<<<<、=======、>>>>>>>），文件内容为 main 或 feature 分支的版本之一",
     "automated_check": "cd /tmp/lg-test-05 && ! grep -q '<<<<<<<' conflict.txt && ! grep -q '>>>>>>>' conflict.txt && echo PASS || echo FAIL",
     "automated_expected": "PASS"
   },
@@ -24,7 +20,6 @@
     "description": "如果文件仍包含冲突标记，则任务失败"
   },
   "hints": {
-    "key_operations": ["↓ (选中冲突文件)", "Space (选择解决方案)", "m (标记为已解决)", "q (退出)"],
-    "expected_flow": "启动 lazygit → 选中冲突文件 → 选择解决方案（如保留 theirs）→ 标记为已解决 → q 退出"
+    "note": "选中冲突文件，选择一个解决方案（如保留某一方的版本），然后标记为已解决"
   }
 }
